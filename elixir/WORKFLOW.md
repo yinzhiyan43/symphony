@@ -1,12 +1,18 @@
 ---
 tracker:
   kind: linear
-  project_slug: "symphony-0c79b11b75ea"
+  api_key: "${LINEAR_API_KEY}"
+  project_slug: "cinema-7330b90bf750"
+  permissions:
+    issue_update: true
+    comment_create: true
+    status_change: true
   active_states:
     - Todo
     - In Progress
     - Merging
     - Rework
+    - In Review
   terminal_states:
     - Closed
     - Cancelled
@@ -14,9 +20,9 @@ tracker:
     - Duplicate
     - Done
 polling:
-  interval_ms: 5000
+  interval_ms: 10000
 workspace:
-  root: ~/code/symphony-workspaces
+  root: ~/symphony/workspaces
 hooks:
   after_create: |
     git clone --depth 1 https://github.com/openai/symphony .
@@ -26,14 +32,15 @@ hooks:
   before_remove: |
     cd elixir && mise exec -- mix workspace.before_remove
 agent:
-  max_concurrent_agents: 10
-  max_turns: 20
+  max_concurrent_agents: 1
+  max_turns: 3
 codex:
-  command: codex --config shell_environment_policy.inherit=all --config 'model="gpt-5.5"' --config model_reasoning_effort=xhigh app-server
+  command: codex --config shell_environment_policy.inherit=all --config 'model="qwen3.6:35b-a3b-coding-bf16"' --config model_reasoning_effort=xhigh app-server
   approval_policy: never
-  thread_sandbox: workspace-write
+  thread_sandbox: danger-full-access
   turn_sandbox_policy:
     type: workspaceWrite
+    networkAccess: true
 ---
 
 You are working on a Linear ticket `{{ issue.identifier }}`
